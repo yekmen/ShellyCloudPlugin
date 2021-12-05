@@ -3,7 +3,7 @@
 # Author: Mario Peters
 #
 """
-<plugin key="ShellyCloudPlugin" name="Shelly Cloud Plugin" author="Mario Peters" version="1.0.1" wikilink="https://github.com/mario-peters/ShellyCloudPlugin/wiki" externallink="https://github.com/mario-peters/ShellyCloudPlugin">
+<plugin key="ShellyCloudPlugin" name="Shelly Cloud Plugin" author="Mario Peters" version="1.0.2" wikilink="https://github.com/mario-peters/ShellyCloudPlugin/wiki" externallink="https://github.com/yekmen/ShellyCloudPlugin">
     <description>
         <h2>Shelly Cloud Plugin</h2><br/>
         Plugin for controlling Shelly devices.
@@ -32,6 +32,13 @@
                <option label="Shelly Plug" value="SHPLG-S"/>
             </options> 
         </param>
+        <param field="Mode6" label="Debug" width="75px">
+            <options>
+                <option label="Verbose" value="Verbose"/>
+                <option label="True" value="Debug"/>
+                <option label="False" value="Normal" default="true" />
+            </options>
+        </param>
     </params>
 </plugin>
 """
@@ -55,6 +62,11 @@ class BasePlugin:
             response_shelly = requests.get("http://"+Parameters["Address"]+"/settings", headers=headers, auth=(Parameters["Username"], Parameters["Password"]), timeout=(10,10))
             json_items = json.loads(response_shelly.text)
             response_shelly.close()
+            self.debugging = Parameters["Mode6"]
+            if self.debugging == "Verbose":
+                Domoticz.Debugging(2+4+8+16+64)
+            if self.debugging == "Debug":
+                Domoticz.Debugging(2)
             if len(Devices) == 0:
                 if Parameters["Mode1"] == "SHDW-2":
                     createSHDW2()
